@@ -41,6 +41,7 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 @property(nonatomic, readonly) bool isPlaying;
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
+@property(nonatomic, readonly) bool isVideoTrackInitialized;
 - (instancetype)initWithURL:(NSURL*)url frameUpdater:(FLTFrameUpdater*)frameUpdater;
 - (void)play;
 - (void)pause;
@@ -189,6 +190,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _isInitialized = false;
+  _isVideoTrackInitialized = false;
   _isPlaying = false;
   _disposed = false;
 
@@ -214,6 +216,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                                         withVideoTrack:videoTrack];
             item.videoComposition = videoComposition;
           }
+            self->_isVideoTrackInitialized = true;
         };
         [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
                                   completionHandler:trackCompletionHandler];
@@ -262,6 +265,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
       case AVPlayerItemStatusUnknown:
         break;
       case AVPlayerItemStatusReadyToPlay:
+            if (!_isVideoTrackInitialized) break;
         [item addOutput:_videoOutput];
         [self sendInitialized];
         [self updatePlayingState];
