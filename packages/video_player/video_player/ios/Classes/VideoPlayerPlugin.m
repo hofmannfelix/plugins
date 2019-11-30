@@ -226,6 +226,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
   _player = [AVPlayer playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+  if (@available(iOS 10.0, *)) {
+    _player.automaticallyWaitsToMinimizeStalling = false;
+  }
 
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
