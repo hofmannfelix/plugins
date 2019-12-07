@@ -228,6 +228,7 @@ FourCharCode const videoFormat = kCVPixelFormatType_32BGRA;
   _enableAudio = enableAudio;
   _dispatchQueue = dispatchQueue;
   _captureSession = [[AVCaptureSession alloc] init];
+  _captureSession.automaticallyConfiguresApplicationAudioSession = false;
 
   _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
   NSError *localError = nil;
@@ -733,6 +734,13 @@ FourCharCode const videoFormat = kCVPixelFormatType_32BGRA;
 }
 - (void)setUpCaptureSessionForAudio {
   NSError *error = nil;
+  // Setup audio session so music can be played simultenously while recording video with audio
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+    withOptions:AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers |
+        AVAudioSessionCategoryOptionDefaultToSpeaker |
+        AVAudioSessionCategoryOptionAllowBluetooth
+          error:nil];
+
   // Create a device input with the device and add it to the session.
   // Setup the audio input.
   AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
