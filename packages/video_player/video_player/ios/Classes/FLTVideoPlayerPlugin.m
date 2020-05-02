@@ -487,15 +487,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     result(nil);
   } else if ([@"create" isEqualToString:call.method]) {
       // Setup audio session so music can be played simultaneously while playing video
-      //TODO: add logic to switch between sessions
-      [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
-      withOptions:AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers |
-          AVAudioSessionCategoryOptionDefaultToSpeaker |
-          AVAudioSessionCategoryOptionAllowBluetooth
-            error:nil];
-//
-//      [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
-//                                    withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+      if ([AVAudioSession sharedInstance].category != AVAudioSessionCategoryPlayAndRecord) {
+          [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
+                                           withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+      }
       
     NSDictionary* argsMap = call.arguments;
     FLTFrameUpdater* frameUpdater = [[FLTFrameUpdater alloc] initWithRegistry:_registry];
